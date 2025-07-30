@@ -1,159 +1,111 @@
 import 'package:flutter/cupertino.dart';
 
-void main() => runApp(const DatePickerApp());
 
-class DatePickerApp extends StatelessWidget {
-  const DatePickerApp({super.key});
+void main() => runApp(const CupertinoFormRowApp());
+
+class CupertinoFormRowApp extends StatelessWidget {
+  const CupertinoFormRowApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const CupertinoApp(
       theme: CupertinoThemeData(brightness: Brightness.light),
-      home: DatePickerAppExample(),
+      home: CupertinoFormRowExample(),
     );
   }
 }
 
-class DatePickerAppExample extends StatefulWidget {
-  const DatePickerAppExample({super.key});
+class CupertinoFormRowExample extends StatefulWidget {
+  const CupertinoFormRowExample({super.key});
 
   @override
-  State<DatePickerAppExample> createState() => _DatePickerAppExampleState();
+  State<CupertinoFormRowExample> createState() => _CupertinoFormRowExampleState();
 }
 
-class _DatePickerAppExampleState extends State<DatePickerAppExample> {
-
-  DateTime date = DateTime(2026, 01, 01);
-  DateTime time = DateTime(2026, 01, 01, 00, 01);
-  DateTime dateTime = DateTime(2026, 01, 01, 00, 01);
-
-  //This is function displays a CupertinoModalPopup with a reasonable fixed height 
-  //Which hosts Cupertino Data Picker
-  void _showDialog(Widget child){
-    showCupertinoModalPopup(
-      context: context, 
-      builder: (BuildContext context) => Container(
-        height: 216,
-        padding: const EdgeInsets.only(top: 6.0),
-
-        //The Bottom margin is provides to align the popup above the system navigationBar.
-        margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-
-        //Provide a background color for the popup
-        color: CupertinoColors.systemBackground.resolveFrom(context),
-
-        //Use a SafeArea widget to avoid system overlaps.
-        child: SafeArea(top: false, child: child,),
-      ),
-    );
-  }
-
-
+class _CupertinoFormRowExampleState extends State<CupertinoFormRowExample> {
+  bool airplaneMode =false;
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(middle: Text('CupertinoDatePicker Sample')),
-      child: DefaultTextStyle(style: TextStyle(color: CupertinoColors.label.resolveFrom(context), fontSize:18.0 ), 
-          child: Center(
-            child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              _DatePickerItem(
-                children: <Widget>[
-                  const Text('Date'),
-                  CupertinoButton(
-                  
-                    //This is example, the date is formatted manually. You can use the initial package to format the value based on the user local
-                    child: Text('${date.month}-${date.day}-${date.year}',
-                    style: const TextStyle(fontSize: 18.0)),
-                    //Display a CupertinoDataPicker in date picker mode
-                    onPressed: () => _showDialog(
-                      CupertinoDatePicker(
-                        initialDateTime: date,
-                        mode: CupertinoDatePickerMode.date,
-                        use24hFormat: true,
-                        //This is show day of week along day of month
-                        showDayOfWeek: true,
-                        //This is call when the user change the date.
-                        onDateTimeChanged: (DateTime newDate){
-                          setState(() {
-                            date = newDate;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                ],
+      navigationBar:const CupertinoNavigationBar(middle: Text("Form Section By Cupertino"),),
+      child: SafeArea(
+        child: CupertinoFormSection(
+          header: const Text('Connectivity'),
+          children: <Widget>[
+            CupertinoFormRow(
+              prefix: const Prefixwidget(
+                icon:CupertinoIcons.airplane,
+                title: 'Airplane',
+                color: CupertinoColors.systemOrange,
               ),
+              child: CupertinoSwitch(
+                value: airplaneMode, 
+                onChanged: (bool value){
+                  setState(() {
+                    airplaneMode = value;
+                  });
+                },
+              ),
+            ),
 
-              _DatePickerItem(
+            const CupertinoFormRow(
+              prefix: Prefixwidget(icon: CupertinoIcons.wifi, title: 'Wi-Fi', color: CupertinoColors.systemBlue),
+              error: Text('Home network unavailable'),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  const Text('Time',style: TextStyle(fontSize: 22.0),),
-                  CupertinoButton(
-                    child: Text('${time.hour}:${time.minute}'), 
-                    onPressed: () => _showDialog(
-                    CupertinoDatePicker(
-                      initialDateTime: time,
-                      mode: CupertinoDatePickerMode.time,
-                      use24hFormat: true,
-                      //this is call with use change the time
-                      onDateTimeChanged:( DateTime newTime)
-                      {
-                        setState(() {
-                          time = newTime;
-                        });
-                      }
-                    ),
-                  ))
+                  Text("Not Connected"),
+                  SizedBox(width: 5,),
+                  Icon(CupertinoIcons.forward),
                 ],
               ),
+            ),
 
-              _DatePickerItem(
-                children:<Widget> [
-                  const Text('DateTime'),
-                  CupertinoButton(child: Text('${dateTime.month}-${dateTime.day}-${dateTime.year}/${dateTime.hour}:${dateTime.minute}',
-                  style: const TextStyle(fontSize: 22.0),
-                  ),
-                    onPressed: () => _showDialog(
-                      CupertinoDatePicker(
-                        initialDateTime: dateTime,
-                        use24hFormat: true,
-                        onDateTimeChanged: (DateTime newDateTime){
-                        setState(() {
-                          dateTime = newDateTime;
-                        });
-                      }),
-                    ),
-                  ),
-                ],
+            const CupertinoFormRow(
+              prefix: Prefixwidget(icon: CupertinoIcons.bluetooth, title: 'Bluetooth', color: CupertinoColors.activeBlue),
+              helper: Padding(padding: EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Headphone"),
+                    Text("Connected"),
+                  ],
+                ),
+              ), child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[Text('On'), SizedBox(width: 5,),Icon(CupertinoIcons.forward)],
               ),
-            ],
-          ),
+            ),
+
+            const CupertinoFormRow(
+              prefix: Prefixwidget(icon: CupertinoIcons.bluetooth, title: 'Mobile Data', color: CupertinoColors.systemGreen),
+              child: Icon(CupertinoIcons.forward),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
+class Prefixwidget extends StatelessWidget {
+  const Prefixwidget({super.key, required this.icon, required this.title,  required this.color});
 
-//This is sample Row of widget
-class _DatePickerItem extends StatelessWidget {
-  const _DatePickerItem({required this.children});
-  final List<Widget> children;
+  final IconData icon;
+  final String title;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        border: Border(
-          top: BorderSide(color: CupertinoColors.inactiveGray, width: 0.0),
-          bottom: BorderSide(color: CupertinoColors.inactiveGray, width: 0.0),
+    return Row(
+      children: <Widget>[
+        Container(
+          padding: const EdgeInsets.all(4.0),
+          decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4.0)),
+          child: Icon(icon, color: CupertinoColors.white),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children : children ),
-      ),
+        const SizedBox(width: 15,),Text(title),
+      ],
     );
   }
 }
